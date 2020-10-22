@@ -26,6 +26,24 @@ async function run(): Promise<void> {
     let head: string | undefined
 
     switch (eventName) {
+      case 'issue_comment':
+        const response_get_pr = await client.pulls.get({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          pull_number: context.payload.issue.number,
+        })
+
+        core.debug(`response_get_pr: ${response_get_pr}`)
+
+        if (response_get_pr.status !== 200) {
+          core.setFailed(
+            `The GitHub API for getting the PR associated with this comment returned ${response_get_pr.status}, expected 200.`
+          )
+        }
+
+        base = response_get_pr.data?.base?.sha
+        head = response_get_pr.data?.head?.sha
+        break
       case 'pull_request':
         base = context.payload.pull_request?.base?.sha
         head = context.payload.pull_request?.head?.sha

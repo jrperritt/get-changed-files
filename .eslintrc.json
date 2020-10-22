@@ -8,6 +8,8 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    // need to call octokit API and store response
+    "no-case-declarations": "off",
     "eslint-comments/no-use": "off",
     "import/no-namespace": "off",
     "no-unused-vars": "off",
@@ -18,7 +20,8 @@
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/ban-ts-ignore": "error",
     "camelcase": "off",
-    "@typescript-eslint/camelcase": "error",
+    // octokit API has a pull_number field
+    //"@typescript-eslint/camelcase": "error",
     "@typescript-eslint/class-name-casing": "error",
     "@typescript-eslint/explicit-function-return-type": ["error", {"allowExpressions": true}],
     "@typescript-eslint/func-call-spacing": ["error", "never"],

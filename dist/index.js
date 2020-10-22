@@ -3511,7 +3511,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github_1 = __webpack_require__(469);
 function run() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Create GitHub client with the API token.
@@ -3528,10 +3528,28 @@ function run() {
             // Define the base and head commits to be extracted from the payload.
             let base;
             let head;
+            const issue = github_1.context.payload.issue;
+            let prNum = 0;
+            if (issue) {
+                prNum = issue.number;
+            }
             switch (eventName) {
+                case 'issue_comment':
+                    const responseGetPr = yield client.pulls.get({
+                        owner: github_1.context.repo.owner,
+                        repo: github_1.context.repo.repo,
+                        pull_number: prNum
+                    });
+                    core.debug(`response_get_pr: ${responseGetPr}`);
+                    if (responseGetPr.status !== 200) {
+                        core.setFailed(`The GitHub API for getting the PR associated with this comment returned ${responseGetPr.status}, expected 200.`);
+                    }
+                    base = (_b = (_a = responseGetPr.data) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
+                    head = (_d = (_c = responseGetPr.data) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
+                    break;
                 case 'pull_request':
-                    base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
-                    head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
+                    base = (_f = (_e = github_1.context.payload.pull_request) === null || _e === void 0 ? void 0 : _e.base) === null || _f === void 0 ? void 0 : _f.sha;
+                    head = (_h = (_g = github_1.context.payload.pull_request) === null || _g === void 0 ? void 0 : _g.head) === null || _h === void 0 ? void 0 : _h.sha;
                     break;
                 case 'push':
                     base = github_1.context.payload.before;
